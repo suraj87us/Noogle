@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
+    testBuildType "debug"
+
     defaultConfig {
         applicationId "com.giyer.noogle"
         minSdkVersion 21
@@ -10,16 +12,29 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        // To avoid library projects to only build the release build type as a default.
+        defaultPublishConfig 'release'
+        publishNonDefault true
     }
     buildTypes {
         release {
+            minifyEnabled true
+            debuggable false
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
             minifyEnabled false
+            debuggable true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 }
 
 dependencies {
+    releaseCompile project(path: ':noogleplatform', configuration: 'release')
+    debugCompile project(path: ':noogleplatform', configuration: 'debug')
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
