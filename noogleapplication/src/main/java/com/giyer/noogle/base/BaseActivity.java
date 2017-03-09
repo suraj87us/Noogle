@@ -4,8 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.giyer.noogle.R;
@@ -14,7 +15,7 @@ import com.giyer.noogle.R;
  * Created by giyer7 on 3/7/17.
  */
 
-public class BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends BaseEventBusActivity implements BaseFragment.BaseFragmentListener {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -56,5 +57,60 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void showSnackBar(View view, String message) {
+
+    }
+
+    @Override
+    public void showUIBlockingProgress() {
+
+    }
+
+    @Override
+    public void hideUIBlockingProgress() {
+
+    }
+
+    @Override
+    public void showHorizontalProgressBar() {
+
+    }
+
+    @Override
+    public void hideHorizontalProgressBar() {
+
+    }
+
+    @Override
+    public void allowViewToScroll(boolean allowViewToScroll) {
+
+    }
+
+    @Override
+    public void dismissKeyboard(View viewHoldingKeyboardForum) {
+
+    }
+
+    @Override
+    public void showKeyboard(EditText editText) {
+
+    }
+
+    @Override
+    public void onFragmentActionBack() {
+
+    }
+
+    @Override
+    public void onRequestTitleUpdate(String titleResource) {
+
+    }
+
+    @Override
+    public void onFragmentActionFinish() {
+
     }
 }

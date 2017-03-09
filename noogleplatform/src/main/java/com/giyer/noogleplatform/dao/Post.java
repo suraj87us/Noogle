@@ -4,12 +4,16 @@ package com.giyer.noogleplatform.dao;
  * Created by giyer7 on 3/6/17.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Post {
+public class Post implements Parcelable {
 
     @SerializedName("thread")
     @Expose
@@ -177,4 +181,73 @@ public class Post {
         this.crawled = crawled;
     }
 
+    protected Post(Parcel in) {
+        thread = (Thread) in.readValue(Thread.class.getClassLoader());
+        uuid = in.readString();
+        url = in.readString();
+        ordInThread = in.readByte() == 0x00 ? null : in.readInt();
+        author = in.readString();
+        published = in.readString();
+        title = in.readString();
+        text = in.readString();
+        highlightText = in.readString();
+        highlightTitle = in.readString();
+        language = in.readString();
+        if (in.readByte() == 0x01) {
+            externalLinks = new ArrayList<Object>();
+            in.readList(externalLinks, Object.class.getClassLoader());
+        } else {
+            externalLinks = null;
+        }
+        entities = (Entities) in.readValue(Entities.class.getClassLoader());
+        rating = (Object) in.readValue(Object.class.getClassLoader());
+        crawled = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(thread);
+        dest.writeString(uuid);
+        dest.writeString(url);
+        if (ordInThread == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(ordInThread);
+        }
+        dest.writeString(author);
+        dest.writeString(published);
+        dest.writeString(title);
+        dest.writeString(text);
+        dest.writeString(highlightText);
+        dest.writeString(highlightTitle);
+        dest.writeString(language);
+        if (externalLinks == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(externalLinks);
+        }
+        dest.writeValue(entities);
+        dest.writeValue(rating);
+        dest.writeString(crawled);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Post> CREATOR = new Parcelable.Creator<Post>() {
+        @Override
+        public Post createFromParcel(Parcel in) {
+            return new Post(in);
+        }
+
+        @Override
+        public Post[] newArray(int size) {
+            return new Post[size];
+        }
+    };
 }

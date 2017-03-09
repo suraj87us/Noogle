@@ -1,15 +1,19 @@
 package com.giyer.noogleplatform.dao;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by giyer7 on 3/6/17.
  */
 
-public class Entities {
+public class Entities implements Parcelable {
 
     @SerializedName("persons")
     @Expose
@@ -21,28 +25,64 @@ public class Entities {
     @Expose
     private List<Object> locations = null;
 
-    public List<Object> getPersons() {
-        return persons;
+    protected Entities(Parcel in) {
+        if (in.readByte() == 0x01) {
+            persons = new ArrayList<Object>();
+            in.readList(persons, Object.class.getClassLoader());
+        } else {
+            persons = null;
+        }
+        if (in.readByte() == 0x01) {
+            organizations = new ArrayList<Object>();
+            in.readList(organizations, Object.class.getClassLoader());
+        } else {
+            organizations = null;
+        }
+        if (in.readByte() == 0x01) {
+            locations = new ArrayList<Object>();
+            in.readList(locations, Object.class.getClassLoader());
+        } else {
+            locations = null;
+        }
     }
 
-    public void setPersons(List<Object> persons) {
-        this.persons = persons;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public List<Object> getOrganizations() {
-        return organizations;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        if (persons == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(persons);
+        }
+        if (organizations == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(organizations);
+        }
+        if (locations == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(locations);
+        }
     }
 
-    public void setOrganizations(List<Object> organizations) {
-        this.organizations = organizations;
-    }
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Entities> CREATOR = new Parcelable.Creator<Entities>() {
+        @Override
+        public Entities createFromParcel(Parcel in) {
+            return new Entities(in);
+        }
 
-    public List<Object> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<Object> locations) {
-        this.locations = locations;
-    }
-
+        @Override
+        public Entities[] newArray(int size) {
+            return new Entities[size];
+        }
+    };
 }

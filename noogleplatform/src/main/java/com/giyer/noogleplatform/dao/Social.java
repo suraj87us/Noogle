@@ -4,10 +4,14 @@ package com.giyer.noogleplatform.dao;
  * Created by giyer7 on 3/6/17.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Social {
+
+public class Social implements Parcelable {
 
     @SerializedName("facebook")
     @Expose
@@ -28,52 +32,40 @@ public class Social {
     @Expose
     private Vk vk;
 
-    public Facebook getFacebook() {
-        return facebook;
+    protected Social(Parcel in) {
+        facebook = (Facebook) in.readValue(Facebook.class.getClassLoader());
+        gplus = (Gplus) in.readValue(Gplus.class.getClassLoader());
+        pinterest = (Pinterest) in.readValue(Pinterest.class.getClassLoader());
+        linkedin = (Linkedin) in.readValue(Linkedin.class.getClassLoader());
+        stumbledupon = (Stumbledupon) in.readValue(Stumbledupon.class.getClassLoader());
+        vk = (Vk) in.readValue(Vk.class.getClassLoader());
     }
 
-    public void setFacebook(Facebook facebook) {
-        this.facebook = facebook;
+    @Override
+    public int describeContents() {
+        return 0;
     }
 
-    public Gplus getGplus() {
-        return gplus;
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(facebook);
+        dest.writeValue(gplus);
+        dest.writeValue(pinterest);
+        dest.writeValue(linkedin);
+        dest.writeValue(stumbledupon);
+        dest.writeValue(vk);
     }
 
-    public void setGplus(Gplus gplus) {
-        this.gplus = gplus;
-    }
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Social> CREATOR = new Parcelable.Creator<Social>() {
+        @Override
+        public Social createFromParcel(Parcel in) {
+            return new Social(in);
+        }
 
-    public Pinterest getPinterest() {
-        return pinterest;
-    }
-
-    public void setPinterest(Pinterest pinterest) {
-        this.pinterest = pinterest;
-    }
-
-    public Linkedin getLinkedin() {
-        return linkedin;
-    }
-
-    public void setLinkedin(Linkedin linkedin) {
-        this.linkedin = linkedin;
-    }
-
-    public Stumbledupon getStumbledupon() {
-        return stumbledupon;
-    }
-
-    public void setStumbledupon(Stumbledupon stumbledupon) {
-        this.stumbledupon = stumbledupon;
-    }
-
-    public Vk getVk() {
-        return vk;
-    }
-
-    public void setVk(Vk vk) {
-        this.vk = vk;
-    }
-
+        @Override
+        public Social[] newArray(int size) {
+            return new Social[size];
+        }
+    };
 }

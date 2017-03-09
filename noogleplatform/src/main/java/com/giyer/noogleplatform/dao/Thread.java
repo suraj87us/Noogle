@@ -4,12 +4,16 @@ package com.giyer.noogleplatform.dao;
  * Created by giyer7 on 3/6/17.
  */
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class Thread {
+public class Thread implements Parcelable {
 
     @SerializedName("uuid")
     @Expose
@@ -220,5 +224,103 @@ public class Thread {
     public void setSocial(Social social) {
         this.social = social;
     }
+
+    protected Thread(Parcel in) {
+        uuid = in.readString();
+        url = in.readString();
+        siteFull = in.readString();
+        site = in.readString();
+        siteSection = in.readString();
+        if (in.readByte() == 0x01) {
+            siteCategories = new ArrayList<String>();
+            in.readList(siteCategories, String.class.getClassLoader());
+        } else {
+            siteCategories = null;
+        }
+        sectionTitle = in.readString();
+        title = in.readString();
+        titleFull = in.readString();
+        published = in.readString();
+        repliesCount = in.readByte() == 0x00 ? null : in.readInt();
+        participantsCount = in.readByte() == 0x00 ? null : in.readInt();
+        siteType = in.readString();
+        country = in.readString();
+        spamScore = in.readByte() == 0x00 ? null : in.readDouble();
+        mainImage = in.readString();
+        performanceScore = in.readByte() == 0x00 ? null : in.readInt();
+        domainRank = in.readByte() == 0x00 ? null : in.readInt();
+        social = (Social) in.readValue(Social.class.getClassLoader());
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(uuid);
+        dest.writeString(url);
+        dest.writeString(siteFull);
+        dest.writeString(site);
+        dest.writeString(siteSection);
+        if (siteCategories == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeList(siteCategories);
+        }
+        dest.writeString(sectionTitle);
+        dest.writeString(title);
+        dest.writeString(titleFull);
+        dest.writeString(published);
+        if (repliesCount == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(repliesCount);
+        }
+        if (participantsCount == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(participantsCount);
+        }
+        dest.writeString(siteType);
+        dest.writeString(country);
+        if (spamScore == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeDouble(spamScore);
+        }
+        dest.writeString(mainImage);
+        if (performanceScore == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(performanceScore);
+        }
+        if (domainRank == null) {
+            dest.writeByte((byte) (0x00));
+        } else {
+            dest.writeByte((byte) (0x01));
+            dest.writeInt(domainRank);
+        }
+        dest.writeValue(social);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Thread> CREATOR = new Parcelable.Creator<Thread>() {
+        @Override
+        public Thread createFromParcel(Parcel in) {
+            return new Thread(in);
+        }
+
+        @Override
+        public Thread[] newArray(int size) {
+            return new Thread[size];
+        }
+    };
 
 }
