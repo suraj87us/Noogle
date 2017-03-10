@@ -5,10 +5,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import com.giyer.noogleplatform.base.RequestMessage;
-
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.SubscriberExceptionEvent;
 
 import static com.giyer.noogle.util.LogUtil.logD;
@@ -65,7 +62,7 @@ public abstract class BaseEventBusActivity extends AppCompatActivity implements 
 
     public abstract void hideHorizontalProgressBar();
 
-    @Subscribe
-    public void onMessageEvent(RequestMessage requestMessage) {
-    }
+//    @Subscribe
+//    public void onMessageEvent(RequestMessage requestMessage) {
+//    }
 }
