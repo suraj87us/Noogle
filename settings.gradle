@@ -1,1 +1,1 @@
-include ':noogleapplication', ':noogleplatform'
+include ':noogleapplication'

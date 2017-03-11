@@ -5,4 +5,7 @@
     <string name="text_recent">Recent</string>
     <string name="text_feed">My Feed</string>
     <string name="text_categories">Categories</string>
+    <string name="no_data">Sorry, we are unable to fetch your feed at this time. Please try again later.</string>
+    <string name="feed_fragment_title">Latest Feed</string>
+    <string name="single_feed_title">Feed detail</string>
 </resources>

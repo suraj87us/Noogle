@@ -2,12 +2,15 @@ package com.giyer.noogle.base;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.Intent;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.CardView;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,10 +18,11 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.giyer.noogle.R;
+import com.giyer.noogle.category.CategoryActivity;
+import com.giyer.noogle.feed.FeedActivity;
+import com.giyer.noogle.recent.RecentActivity;
 import com.giyer.noogle.util.LockableScrollView;
 
 import butterknife.Bind;
@@ -57,17 +61,17 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
     @Bind(R.id.app_bar)
     Toolbar mToolBar;
 
-    @Bind(R.id.header_card_primary_text)
-    TextView mTvHeaderCardPrimaryText;
+//    @Bind(R.id.header_card_primary_text)
+//    TextView mTvHeaderCardPrimaryText;
+//
+//    @Bind(R.id.header_card_secondary_text)
+//    TextView mTvHeaderCardSecondaryText;
+//
+//    @Bind(R.id.header_card_end_text)
+//    TextView mTvHeaderCardEndText;
 
-    @Bind(R.id.header_card_secondary_text)
-    TextView mTvHeaderCardSecondaryText;
-
-    @Bind(R.id.header_card_end_text)
-    TextView mTvHeaderCardEndText;
-
-    @Bind(R.id.card_header)
-    CardView mCardViewHeader;
+    /*@Bind(R.id.card_header)
+    CardView mCardViewHeader;*/
 
     @Bind(R.id.bottom_navigation)
     BottomNavigationView bottomNavigationView;
@@ -106,13 +110,16 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.action_recent:
-                                Toast.makeText(getApplicationContext(), "Recent Clicked", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), RecentActivity.class));
+                                finish();
                                 break;
                             case R.id.action_feed:
-                                Toast.makeText(getApplicationContext(), "Feed Clicked", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), FeedActivity.class));
+                                finish();
                                 break;
                             case R.id.action_category:
-                                Toast.makeText(getApplicationContext(), "Category Clicked", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), CategoryActivity.class));
+                                finish();
                                 break;
                         }
                         return true;
@@ -217,8 +224,20 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
 
     @Override
     public void onRequestActionBarDisplayType(ActionFlowFragment.DisplayRequest request) {
-
         switch (request) {
+            case ACTION_BACK:
+                getSupportActionBar().show();
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                /**
+                 * This is a hack to make the UP Arrow color white. Needs to be this way because
+                 * DrawerToggle.setDrawerIndicatorEnabled overrides the Up Arrow color set by the
+                 * Theme.
+                 */
+                Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.ic_back_arrow_material);
+                upArrow.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
+                getSupportActionBar().setHomeAsUpIndicator(upArrow);
+                break;
             case NO_HOME_BUTTON:
                 getSupportActionBar().show();
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -241,23 +260,6 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
     public void onRequestBackgroundUpdate(int backgroundResource) {
         mMasterContainer.setBackgroundResource(backgroundResource);
     }
-
-    @Override
-    public void setHeaderCardVisible(boolean visible) {
-        int cardVisibility = View.GONE;
-        if (visible) {
-            cardVisibility = View.VISIBLE;
-        }
-        mCardViewHeader.setVisibility(cardVisibility);
-    }
-
-    @Override
-    public void setHeaderCardInfo(CharSequence primaryText, CharSequence secondaryText, CharSequence endText) {
-        mTvHeaderCardPrimaryText.setText(primaryText);
-        mTvHeaderCardSecondaryText.setText(secondaryText);
-        mTvHeaderCardEndText.setText(endText);
-    }
-
 
     @Override
     public void allowViewToScroll(boolean fragmentScrolling) {
@@ -289,7 +291,6 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
                 lockTouchInput();
             }
         });
-
     }
 
     @Override
@@ -304,7 +305,6 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
                 lockTouchInput();
             }
         });
-
     }
 
     @Override
@@ -319,7 +319,6 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
                 unlockTouchInput();
             }
         });
-
     }
 
     @Override

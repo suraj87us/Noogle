@@ -1,27 +1,33 @@
 package com.giyer.noogle;
 
-import com.giyer.noogleplatform.BaseApplication;
+import android.support.multidex.MultiDexApplication;
+
+import com.giyer.noogle.network.Platform;
+import com.giyer.noogle.network.PlatformAppModule;
+import com.giyer.noogle.network.managers.environment.EnvironmentManagerImpl;
 
 /**
  * Created by giyer7 on 3/9/17.
  */
 
-public class NoogleApplication extends BaseApplication {
+public class NoogleApplication extends MultiDexApplication {
 
-//    private ApplicationComponent mComponent;
-//
-//    @Override
-//    public void onCreate() {
-//        super.onCreate();
-//
-////        mComponent = DaggerApplicationComponent.builder()
-////                .appModule(new AppModule(this))
-////                .applicationModule(new ApplicationModule())
-////                .build();
-////
-//    }
-//
-//    public ApplicationComponent getComponent(){
-//        return mComponent;
-//    }
+    private ApplicationComponent mComponent;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        Platform.init(this);
+        EnvironmentManagerImpl.getInstance().initialize(this);
+
+        mComponent = DaggerApplicationComponent.builder()
+                .platformAppModule(new PlatformAppModule(this))
+                .applicationModule(new ApplicationModule())
+                .build();
+
+    }
+
+    public ApplicationComponent getComponent(){
+        return mComponent;
+    }
 }

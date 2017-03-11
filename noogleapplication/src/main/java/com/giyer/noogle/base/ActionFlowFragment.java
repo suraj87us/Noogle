@@ -21,10 +21,6 @@ public abstract class ActionFlowFragment<E extends ActionFlowFragment.ActionFlow
 
         getCallback().onRequestActionBarDisplayType(actionBarDisplay());
         getCallback().allowViewToScroll(allowViewToScroll());
-
-        getCallback().setHeaderCardVisible(showHeaderCard());
-
-
     }
 
     /**
@@ -62,30 +58,6 @@ public abstract class ActionFlowFragment<E extends ActionFlowFragment.ActionFlow
     }
 
     /**
-     * Override to show summary header (for monthly transactions fragment)
-     */
-    public boolean showHeaderCard() {
-        return false;
-    }
-
-    /**
-     * Call to set header card information
-     */
-    public void setHeaderCardInfo(CharSequence primaryText, CharSequence secondaryText, CharSequence endText) {
-        getCallback().setHeaderCardInfo(primaryText, secondaryText, endText);
-    }
-
-
-    /**
-     * To suggest whether available balance balance is to shown or not
-     *
-     * @return
-     */
-    public boolean showCardStatusIndicator() {
-        return false;
-    }
-
-    /**
      * Listener for ServeBaseAction Class
      */
     public interface ActionFlowFragmentListener extends BaseFragment.BaseFragmentListener {
@@ -93,10 +65,6 @@ public abstract class ActionFlowFragment<E extends ActionFlowFragment.ActionFlow
         void onRequestActionBarDisplayType(DisplayRequest request);
 
         void onRequestBackgroundUpdate(int backgroundResource);
-
-        void setHeaderCardVisible(boolean visible);
-
-        void setHeaderCardInfo(CharSequence primaryText, CharSequence secondaryText, CharSequence endText);
 
         void setActionBarHeight(int actionBarHeight);
     }

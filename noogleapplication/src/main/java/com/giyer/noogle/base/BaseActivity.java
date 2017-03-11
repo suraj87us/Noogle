@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.giyer.noogle.NoogleApplication;
 import com.giyer.noogle.Preferences;
 import com.giyer.noogle.R;
 
@@ -49,7 +50,7 @@ public abstract class BaseActivity extends BaseEventBusActivity implements BaseF
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         overridePendingTransition(getTransitionIn(), getTransitionOut());
-        //((NoogleApplication)getApplication()).getComponent().inject(this);
+        ((NoogleApplication)getApplication()).getComponent().inject(this);
     }
 
     @Override
