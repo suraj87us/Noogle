@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_my_feed"
+            android:icon="@drawable/ic_favorite_black_24dp"
+            android:title="My Feed" />
+        <item
+            android:id="@+id/nav_category"
+            android:icon="@drawable/ic_whatshot_black_24dp"
+            android:title="Categories" />
+    </group>
+
+    <item android:title="Help">
+        <menu>
+            <item
+                android:id="@+id/nav_settings"
+                android:icon="@drawable/ic_settings_black_24dp"
+                android:title="Settings" />
+        </menu>
+    </item>
+
+</menu>

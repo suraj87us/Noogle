@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="4dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:visibility="gone"
+        android:id="@+id/header_divider"
+        android:layout_alignParentTop="true"
+        android:background="@color/divider" />
+
+    <TextView
+        android:id="@+id/settings_text"
+        android:layout_width="wrap_content"
+        android:layout_centerVertical="true"
+        android:fontFamily="sans-serif-medium"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:paddingTop="8dp"
+        android:textAllCaps="true"
+        android:textSize="14sp" />
+
+</RelativeLayout>
+
+
+
+
+
+
+
+
+
+
+
+

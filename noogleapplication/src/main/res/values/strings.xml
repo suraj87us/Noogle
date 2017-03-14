@@ -6,6 +6,16 @@
     <string name="text_feed">My Feed</string>
     <string name="text_categories">Categories</string>
     <string name="no_data">Sorry, we are unable to fetch your feed at this time. Please try again later.</string>
-    <string name="feed_fragment_title">Latest Feed</string>
+    <string name="feed_fragment_title">My Feed</string>
     <string name="single_feed_title">Feed detail</string>
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search</string>
+    <string name="category_fragment_title">Categories</string>
+    <string name="nav_header_title">Features</string>
+    <string name="nav_my_feed_title">My Feed</string>
+    <string name="nav_categories_title">Categories</string>
+    <string name="nav_explore_title">Explore</string>
+    <string name="nav_settings_title">Settings</string>
+    <string name="nav_drawer_open">Open</string>
+    <string name="nav_drawer_closed">Close</string>
 </resources>

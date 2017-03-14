@@ -148,3 +148,7 @@
 #OkHttp3
 -dontwarn com.squareup.okhttp3.**
 -keep class com.squareup.okhttp3.* { *;}
+
+#SearchView
+-keep class android.support.v7.widget.SearchView { *; }
+-keep class android.support.widget.SearchView { *; }

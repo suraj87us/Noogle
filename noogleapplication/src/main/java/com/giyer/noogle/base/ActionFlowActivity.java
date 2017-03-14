@@ -8,9 +8,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,12 +21,14 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.giyer.noogle.R;
 import com.giyer.noogle.category.CategoryActivity;
 import com.giyer.noogle.feed.FeedActivity;
-import com.giyer.noogle.recent.RecentActivity;
 import com.giyer.noogle.util.LockableScrollView;
+import com.giyer.noogle.util.NavigationAdapter;
+import com.giyer.noogle.util.RVListItem;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -34,7 +39,9 @@ import static com.giyer.noogle.util.LogUtil.makeLogTag;
  * Created by giyer7 on 3/9/17.
  */
 
-public abstract class ActionFlowActivity extends BaseActivity implements ActionFlowFragment.ActionFlowFragmentListener, FragmentManager.OnBackStackChangedListener {
+public abstract class ActionFlowActivity extends BaseActivity implements ActionFlowFragment.ActionFlowFragmentListener,
+        FragmentManager.OnBackStackChangedListener,
+        NavigationAdapter.NavigationClickListener, NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = makeLogTag(ActionFlowActivity.class);
     private final int ANIMATION_TRANSITION_DURATION = 500;
     private final int ANIMATION_ROTATION_AMT = 0;// -2;
@@ -61,41 +68,130 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
     @Bind(R.id.app_bar)
     Toolbar mToolBar;
 
-//    @Bind(R.id.header_card_primary_text)
-//    TextView mTvHeaderCardPrimaryText;
-//
-//    @Bind(R.id.header_card_secondary_text)
-//    TextView mTvHeaderCardSecondaryText;
-//
-//    @Bind(R.id.header_card_end_text)
-//    TextView mTvHeaderCardEndText;
+/*    @Bind(R.id.bottom_navigation)
+    BottomNavigationView bottomNavigationView;*/
 
-    /*@Bind(R.id.card_header)
-    CardView mCardViewHeader;*/
-
-    @Bind(R.id.bottom_navigation)
-    BottomNavigationView bottomNavigationView;
+    protected ActionBarDrawerToggle mDrawerToggle;
+    @Bind(R.id.drawer_layout)
+    protected DrawerLayout mDrawerLayout;
+    /*@Bind(R.id.nav_view)
+    RecyclerView mNavigationView;*/
+    @Bind(R.id.navigation_view)
+    NavigationView navigationView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getContentViewResource());
         ButterKnife.bind(this);
-        setupBottomNavigation();
+        //setupBottomNavigation();
+        //setupNavDrawer();
         // Set the Toolbar
         setSupportActionBar(mToolBar);
+        setupNativeNavDrawer();
         // Enable the Home as Up Button
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportFragmentManager().addOnBackStackChangedListener(this);
     }
+
+    /*private void setupNavDrawer() {
+        if (mDrawerLayout == null)
+            // current activity does not have a drawer
+            return;
+        if (mNavigationView != null) {
+            setupDrawerSelectionListener();
+            //setSelectedItem();
+            DisplayMetrics metrics = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            mNavigationView.getLayoutParams().width = Math.min(PixelUtils.dipToPixels(this, 320), metrics.widthPixels - PixelUtils.dipToPixels(this, 56));
+            mNavigationView.setLayoutManager(new LinearLayoutManager(this));
+            List<RVListItem> navigationItems = new ArrayList<>();
+            navigationItems.add(new RVListHeaderItem(getString(R.string.nav_header_title)));
+            navigationItems.add(new RVListIconTextTileItem(getString(R.string.nav_my_feed_title), R.drawable.ic_favorite_black_24dp));
+            navigationItems.add(new RVListHeaderItem(getString(R.string.nav_explore_title)));
+            navigationItems.add(new RVListIconTextTileItem(getString(R.string.nav_categories_title), R.drawable.ic_whatshot_black_24dp));
+
+            navigationItems.add(new RVListHeaderItem("", true));
+            navigationItems.add(new RVListIconTextTileItem(getString(R.string.nav_settings_title), R.drawable.ic_settings_black_24dp));
+
+            NavigationAdapter adapter = new NavigationAdapter(navigationItems, this);
+            mNavigationView.setAdapter(adapter);
+        }
+        logD(TAG, "navigation drawer setup finished");
+    }*/
+
+    private void setupNativeNavDrawer() {
+        mDrawerToggle = new ActionBarDrawerToggle(
+                this, mDrawerLayout, mToolBar, R.string.nav_drawer_open, R.string.nav_drawer_closed) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                supportInvalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                supportInvalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerToggle.syncState();
+            }
+        });
+
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.getMenu().findItem(getSelectedNavViewItem()).setChecked(true);
+    }
+
+/*    private void setupDrawerSelectionListener() {
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, null, R.string.nav_drawer_open, R.string.nav_drawer_closed) {
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                supportInvalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                supportInvalidateOptionsMenu();
+            }
+        };
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerToggle.syncState();
+            }
+        });
+    }*/
 
     @Override
     public void setActionBarHeight(int actionBarHeight) {
         getSupportActionBar().setElevation(actionBarHeight);
     }
 
+    protected abstract int getSelectedNavViewItem();
+//
+//    private void setSelectedNavViewItem() {
+//        View view = bottomNavigationView.findViewById(getSelectedNavViewItem());
+//        view.performClick();
+//    }
+
     @Override
     public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
         if (mLoadingDisplay) {
             showToast("We are currently processing your request at this time. We apologize for the inconvenience.");
         } else {
@@ -103,29 +199,45 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
         }
     }
 
-    private void setupBottomNavigation() {
-        bottomNavigationView.setOnNavigationItemSelectedListener(
-                new BottomNavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                        switch (item.getItemId()) {
-                            case R.id.action_recent:
-                                startActivity(new Intent(getApplicationContext(), RecentActivity.class));
-                                finish();
-                                break;
-                            case R.id.action_feed:
-                                startActivity(new Intent(getApplicationContext(), FeedActivity.class));
-                                finish();
-                                break;
-                            case R.id.action_category:
-                                startActivity(new Intent(getApplicationContext(), CategoryActivity.class));
-                                finish();
-                                break;
-                        }
-                        return true;
-                    }
-                });
+    @Override
+    public void onNavigationItemClicked(View v, int pos, RVListItem item) {
+        /*String navigationItemTitle = item.getPrimaryText();
+        if (navigationItemTitle.equals(getString(R.string.nav_my_feed_title))) {
+            startActivity(new Intent(getApplicationContext(), FeedActivity.class));
+            finish();
+        } else if (navigationItemTitle.equals(getString(R.string.nav_categories_title))) {
+            startActivity(new Intent(getApplicationContext(), CategoryActivity.class));
+            finish();
+        } else if (navigationItemTitle.equals(getString(R.string.nav_settings_title))) {
+            //startActivity(new Intent(getApplicationContext(), CategoryActivity.class));
+            Toast.makeText(this, "Settings In Progress", Toast.LENGTH_SHORT).show();
+            finish();
+        }*/
     }
+
+//    private void setupBottomNavigation() {
+//        bottomNavigationView.setOnNavigationItemSelectedListener(
+//                new BottomNavigationView.OnNavigationItemSelectedListener() {
+//                    @Override
+//                    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+//                        switch (item.getItemId()) {
+//                            case R.id.action_recent:
+//                                startActivity(new Intent(getApplicationContext(), RecentActivity.class));
+//                                finish();
+//                                break;
+//                            case R.id.action_feed:
+//                                startActivity(new Intent(getApplicationContext(), FeedActivity.class));
+//                                finish();
+//                                break;
+//                            case R.id.action_category:
+//                                startActivity(new Intent(getApplicationContext(), CategoryActivity.class));
+//                                finish();
+//                                break;
+//                        }
+//                        return true;
+//                    }
+//                });
+//    }
 
     protected int getContentViewResource() {
         return R.layout.action_flow_layout;
@@ -229,6 +341,7 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
                 getSupportActionBar().show();
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
                 /**
                  * This is a hack to make the UP Arrow color white. Needs to be this way because
                  * DrawerToggle.setDrawerIndicatorEnabled overrides the Up Arrow color set by the
@@ -238,17 +351,31 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
                 upArrow.setColorFilter(ContextCompat.getColor(this, R.color.white), PorterDuff.Mode.SRC_ATOP);
                 getSupportActionBar().setHomeAsUpIndicator(upArrow);
                 break;
+
+            case ACTION_HAMBURGER:
+                getSupportActionBar().show();
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
+                break;
             case NO_HOME_BUTTON:
                 getSupportActionBar().show();
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
                 getSupportActionBar().setDisplayHomeAsUpEnabled(false);
                 getSupportActionBar().setDisplayShowHomeEnabled(false);
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
                 break;
             case NO_ACTION_BAR:
             default:
                 getSupportActionBar().hide();
                 break;
         }
+    }
+
+    @Override
+    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        mDrawerToggle.syncState();
     }
 
     public void onRequestTitleUpdate(String title) {
@@ -345,4 +472,25 @@ public abstract class ActionFlowActivity extends BaseActivity implements ActionF
     public void onBackStackChanged() {
 
     }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_my_feed) {
+            startActivity(new Intent(getApplicationContext(), FeedActivity.class));
+            finish();
+        } else if (id == R.id.nav_category) {
+            startActivity(new Intent(getApplicationContext(), CategoryActivity.class));
+            finish();
+        } else if (id == R.id.nav_settings) {
+            Toast.makeText(this, "Settings In Progress", Toast.LENGTH_SHORT).show();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
 }

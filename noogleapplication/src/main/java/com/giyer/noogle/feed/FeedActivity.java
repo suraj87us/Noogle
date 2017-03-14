@@ -18,7 +18,7 @@ import org.greenrobot.eventbus.Subscribe;
  * Created by giyer7 on 3/7/17.
  */
 
-public class FeedActivity extends ActionFlowActivity implements FeedFragment.FeedFragmentListener {
+public class FeedActivity extends ActionFlowActivity implements FeedFragment.FeedFragmentListener{
 
     public static final String URL_REDIRECT = "URL_REDIRECT";
 
@@ -33,16 +33,17 @@ public class FeedActivity extends ActionFlowActivity implements FeedFragment.Fee
     }
 
     @Override
-    public void makeFeedRequest() {
-        showUIBlockingProgress();
-        HttpUtil.SendMessage(this, buildNewsFeedRequest());
+    public void makeFeedRequest(boolean isPullToRefresh, String searchQuery) {
+        if(!isPullToRefresh)
+            showUIBlockingProgress();
+        HttpUtil.SendMessage(this, buildNewsFeedRequest(searchQuery));
     }
 
     @Subscribe
     public void onMessageEvent(final GetNewsResponse getNewsResponse) {
         hideUIBlockingProgress();
         if (getNewsResponse.getResponseCode() != 200) {
-            Toast.makeText(this, "Unable to fetch feed. Please trt again later", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Unable to fetch feed. Please try again later", Toast.LENGTH_SHORT).show();
         } else {
             runOnUiThread(new Runnable() {
                 @Override
@@ -57,15 +58,20 @@ public class FeedActivity extends ActionFlowActivity implements FeedFragment.Fee
     }
 
     @Override
+    protected int getSelectedNavViewItem() {
+        return R.id.nav_my_feed;
+    }
+
+    @Override
     public void onFeedItemClick(int position, String url) {
         Bundle bundle = new Bundle();
         bundle.putString(URL_REDIRECT, url);
         swapFragment(SingleFeedFragment.newInstance(bundle), false, false);
     }
 
-    private GetNewsRequest buildNewsFeedRequest() {
+    private GetNewsRequest buildNewsFeedRequest(String searchQuery) {
         GetNewsRequest request = new GetNewsRequest();
-        request.setQuery("Obama"); // Testing
+        request.setQuery(searchQuery); // Testing
         request.setSortType(SortType.FB_LIKES.getSortType());
         return request;
     }

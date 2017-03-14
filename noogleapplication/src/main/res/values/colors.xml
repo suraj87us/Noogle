@@ -10,5 +10,6 @@
     <color name="grey_background">#0d000000</color>
     <color name="black_87">#de000000</color>
     <color name="secondary_gray_text">#8a000000</color>
+    <color name="divider">#29000000</color>
 
 </resources>

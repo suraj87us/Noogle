@@ -12,8 +12,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".base.SplashActivity"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,21 +25,17 @@
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+        </activity>
         <activity
             android:name=".category.CategoryActivity"
             android:configChanges="keyboardHidden|orientation"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".recent.RecentActivity"
-            android:configChanges="keyboardHidden|orientation"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
-
-        <service android:enabled="true" android:name="com.giyer.noogle.network.NoogleService"/>
+        <service
+            android:name="com.giyer.noogle.network.NoogleService"
+            android:enabled="true" />
     </application>
 
 </manifest>
